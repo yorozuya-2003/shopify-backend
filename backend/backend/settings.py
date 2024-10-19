@@ -44,6 +44,7 @@ CSRF_TRUSTED_ORIGINS = [
 
 CORS_ALLOW_HEADERS = [
     'ngrok-skip-browser-warning',
+    'x-shopify-access-token',
 ]
 
 # Application definition
