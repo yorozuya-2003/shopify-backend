@@ -11,7 +11,7 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
 from dotenv import load_dotenv
-from os import environ
+from os import environ, path
 from pathlib import Path
 
 # Loading environment variables
@@ -96,20 +96,35 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    },
-    # 'default': {
-    #     'ENGINE': 'django.db.backends.postgresql',
-    #     'NAME': environ.get('POSTGRES_DB'),
-    #     'USER': environ.get('POSTGRES_USER'),
-    #     'PASSWORD': environ.get('POSTGRES_PASSWORD'),
-    #     'HOST': 'localhost',
-    #     'PORT': '5432'
-    # }
-}
+
+USE_AWS_RDS = False
+
+if USE_AWS_RDS:
+    from .aws_secrets_manager import get_secret
+    aws_secret = get_secret()
+
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': environ.get('DB_NAME'),
+            'USER': aws_secret['username'],
+            'PASSWORD': aws_secret['password'],
+            'HOST': environ.get('DB_HOST'),
+            'PORT': environ.get('DB_PORT')
+        }
+    }
+
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': environ.get('POSTGRES_DB'),
+            'USER': environ.get('POSTGRES_USER'),
+            'PASSWORD': environ.get('POSTGRES_PASSWORD'),
+            'HOST': 'localhost',
+            'PORT': '5432'
+        }
+    }
 
 
 # Password validation
@@ -146,7 +161,8 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
-STATIC_URL = 'static/'
+STATIC_URL = '/shopify-dummy/static/'
+STATIC_ROOT = path.join(BASE_DIR, 'static')
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
