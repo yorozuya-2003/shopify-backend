@@ -14,7 +14,8 @@ class Shop(models.Model):
 
 class Order(models.Model):
     order_id = models.BigIntegerField(unique=True)
-    contact_email = models.EmailField()
+    shop_domain = models.CharField(max_length=255)
+    contact_email = models.EmailField(null=True, blank=True)
     created_at = models.DateTimeField()
     currency = models.CharField(max_length=3)
     current_subtotal_price = models.DecimalField(max_digits=10, decimal_places=3)

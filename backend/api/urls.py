@@ -9,4 +9,5 @@ urlpatterns = [
     path('shopify-webhook/order-create/', order.OrderCreateWebhook.as_view(), name='webhook_order_create'),
 
     path('products/', product.ProductList.as_view(), name='product_list'),
+    path('orders/', order.OrderList.as_view(), name='order_list'),
 ]
