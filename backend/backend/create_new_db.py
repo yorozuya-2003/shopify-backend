@@ -10,10 +10,11 @@ from aws_secrets_manager import get_secret
 load_dotenv()
 aws_secret = get_secret()
 
+default_db_name = 'postgres'
 db_name = environ.get('DB_NAME')
 
 con = psycopg2.connect(
-    dbname=db_name,
+    dbname=default_db_name,
     host=environ.get('DB_HOST'),
     user=aws_secret['username'],
     password=aws_secret['password'],
