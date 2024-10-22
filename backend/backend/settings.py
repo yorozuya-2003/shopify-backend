@@ -31,7 +31,7 @@ SECRET_KEY = 'django-insecure-ds@k8lg73zd8fllp1u%b2^kjcf7yih8dcgoe3y@hmnpz7r=8g%
 DEBUG = True
 
 
-SHOPIFY_APP_URL = environ.get('SHOPIFY_APP_URL')
+SHOPIFY_API_URL = environ.get('SHOPIFY_API_URL')
 
 ALLOWED_HOSTS = ['*']
 
@@ -39,7 +39,7 @@ CORS_ORIGIN_ALLOW_ALL = True
 CORS_ALLOW_CREDENTIALS = True
 
 CSRF_TRUSTED_ORIGINS = [
-    SHOPIFY_APP_URL,
+    SHOPIFY_API_URL,
 ]
 
 CORS_ALLOW_HEADERS = [
@@ -58,7 +58,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'corsheaders',
-    'api'
+    'api',
+    'compliance',
 ]
 
 MIDDLEWARE = [
@@ -161,7 +162,7 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
-STATIC_URL = '/shopify-dummy/static/'
+STATIC_URL = '/shopify/static/'
 STATIC_ROOT = path.join(BASE_DIR, 'static')
 
 # Default primary key field type
@@ -169,10 +170,11 @@ STATIC_ROOT = path.join(BASE_DIR, 'static')
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+APPEND_SLASH = False
 
 SHOPIFY_API_KEY = environ.get('SHOPIFY_API_KEY')
 SHOPIFY_API_SECRET = environ.get('SHOPIFY_API_SECRET')
 SHOPIFY_API_SCOPES = environ.get('SHOPIFY_API_SCOPES')
 SHOPIFY_API_VERSION = environ.get('SHOPIFY_API_VERSION', 'unstable')
 
-FRONTEND_URL = environ.get('FRONTEND_URL')
+SHOPIFY_APP_URL = environ.get('SHOPIFY_APP_URL')

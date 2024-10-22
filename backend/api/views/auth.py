@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.db import transaction
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
@@ -9,9 +10,11 @@ from rest_framework import status
 from ..models import Shop
 from ..utils import login, callback
 
+
 class Login(APIView):
     def get(self, request):
         shop = request.query_params.get('shop')
+
         if shop:
             return login.authenticate(request)
         return Response({"error": "Shop domain required"}, status=status.HTTP_400_BAD_REQUEST)
@@ -36,19 +39,18 @@ class Callback(APIView):
         except ValueError as exception:
             return Response({"error": str(exception)}, status=status.HTTP_400_BAD_REQUEST)
 
-        redirect_uri = login.build_callback_redirect_uri(request, params)
+        redirect_uri = f"{settings.SHOPIFY_APP_URL}?shop={params.get('shop')}"
+
         return Response({
-            "success": True,
-            "redirect_uri": redirect_uri,
-            "accessToken": access_token,
-            "shop": shop}, status=status.HTTP_200_OK)
+            "success": True, "redirect_uri": redirect_uri,
+            "accessToken": access_token, "shop": shop}, status=status.HTTP_200_OK)
+
 
 class Uninstall(APIView):
     @method_decorator(csrf_exempt)
     def post(self, request):
         uninstall_data = request.data
-        shop = uninstall_data.get("domain")
-        
-        Shop.objects.filter(shopify_domain=shop).delete()
+        shop_domain = uninstall_data.get("domain")
+        Shop.objects.filter(domain=shop_domain).delete()
 
         return Response(status=status.HTTP_204_NO_CONTENT)

@@ -24,7 +24,7 @@ class OrderCreateWebhook(APIView):
             shop_domain = request.META['HTTP_X_SHOPIFY_SHOP_DOMAIN']
 
             with transaction.atomic():
-                shop = Shop.objects.get(shopify_domain=shop_domain)
+                shop = Shop.objects.get(domain=shop_domain)
 
                 order = Order(
                     order_id=webhook_data['id'],
@@ -60,9 +60,9 @@ class OrderList(APIView):
             with transaction.atomic():
                 with connection.cursor() as cursor:
                     cursor.execute('''
-                        SELECT o.*, s.shopify_domain FROM api_order o
+                        SELECT o.*, s.domain FROM api_order o
                         JOIN api_shop s ON o.shop_id = s.id
-                        WHERE s.shopify_domain = %s
+                        WHERE s.domain = %s
                     ''', [shop_domain])
                 
                     results = db.dictfetchall(cursor)
