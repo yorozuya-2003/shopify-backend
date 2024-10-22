@@ -11,10 +11,9 @@ def validate_hmac(body, secret, hmac_to_verify):
 
 def validate_webhook(request):
     try:
-        webhook_topic = request.META['HTTP_X_SHOPIFY_TOPIC']
         webhook_hmac = request.META['HTTP_X_SHOPIFY_HMAC_SHA256']
         webhook_data = request.body
     except:
         return False
 
-    return validate_hmac(webhook_data, settings.SHOPIFY_WEBHOOK_SIGNED_KEY, webhook_hmac)
+    return validate_hmac(webhook_data, settings.SHOPIFY_API_SECRET, webhook_hmac)

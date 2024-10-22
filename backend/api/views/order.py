@@ -27,7 +27,6 @@ class OrderCreateWebhook(APIView):
                 order = Order(
                     order_id=webhook_data['id'],
                     shop_domain=shop_domain,
-                    contact_email=webhook_data['contact_email'],
                     created_at=webhook_data['created_at'],
                     currency=webhook_data['currency'],
                     current_subtotal_price=webhook_data['current_subtotal_price'],

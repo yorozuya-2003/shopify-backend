@@ -1,4 +1,5 @@
 from django.conf import settings
+from django.urls import reverse
 
 from ..models import Shop
 from .login import _new_session
@@ -50,5 +51,14 @@ def create_uninstall_webhook(shop, access_token):
         webhook = shopify.Webhook()
         webhook.topic = "app/uninstalled"
         webhook.address = f"https://{app_url}/api/uninstall/"
+        webhook.format = "json"
+        webhook.save()
+
+
+def create_order_create_webhook(shop, access_token):
+    with shopify_session(shop, access_token):
+        webhook = shopify.Webhook()
+        webhook.topic = "orders/create"
+        webhook.address = reverse('webhook_order_create')
         webhook.format = "json"
         webhook.save()
