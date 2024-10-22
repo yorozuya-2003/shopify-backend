@@ -1,4 +1,4 @@
-from django.conf import settings
+from django.db import transaction
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
 
@@ -8,7 +8,6 @@ from rest_framework import status
 
 from ..models import Shop
 from ..utils import login, callback
-
 
 class Login(APIView):
     def get(self, request):
@@ -27,11 +26,12 @@ class Callback(APIView):
         shop = params.get("shop")
 
         try:
-            callback.validate_params(request, params)
-            access_token, access_scopes = callback.exchange_code_for_access_token(request, shop)
-            callback.store_shop_information(access_token, access_scopes, shop)
-            callback.create_uninstall_webhook(shop, access_token)
-            callback.create_order_create_webhook(shop, access_token)
+            with transaction.atomic():
+                callback.validate_params(request, params)
+                access_token, access_scopes = callback.exchange_code_for_access_token(request, shop)
+                callback.store_shop_information(access_token, access_scopes, shop)
+                callback.create_uninstall_webhook(shop, access_token)
+                callback.create_order_create_webhook(shop, access_token)
             
         except ValueError as exception:
             return Response({"error": str(exception)}, status=status.HTTP_400_BAD_REQUEST)

@@ -47,18 +47,23 @@ def shopify_session(shopify_domain, access_token):
 
 def create_uninstall_webhook(shop, access_token):
     with shopify_session(shop, access_token):
-        app_url = settings.SHOPIFY_APP_URL
+        api_url = settings.SHOPIFY_APP_URL
+        endpoint = api_url + reverse('uninstall')
+
         webhook = shopify.Webhook()
         webhook.topic = "app/uninstalled"
-        webhook.address = f"https://{app_url}/api/uninstall/"
+        webhook.address = endpoint
         webhook.format = "json"
         webhook.save()
 
 
 def create_order_create_webhook(shop, access_token):
     with shopify_session(shop, access_token):
+        api_url = settings.SHOPIFY_APP_URL
+        endpoint = api_url + reverse('webhook_order_create')
+
         webhook = shopify.Webhook()
         webhook.topic = "orders/create"
-        webhook.address = reverse('webhook_order_create')
+        webhook.address = endpoint
         webhook.format = "json"
         webhook.save()

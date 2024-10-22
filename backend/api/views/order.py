@@ -9,7 +9,7 @@ from django.utils.decorators import method_decorator
 
 import shopify
 
-from ..models import Order
+from ..models import Order, Shop
 from ..utils import webhook, db
 
 
@@ -24,9 +24,11 @@ class OrderCreateWebhook(APIView):
             shop_domain = request.META['HTTP_X_SHOPIFY_SHOP_DOMAIN']
 
             with transaction.atomic():
+                shop = Shop.objects.get(shopify_domain=shop_domain)
+
                 order = Order(
                     order_id=webhook_data['id'],
-                    shop_domain=shop_domain,
+                    shop=shop,
                     created_at=webhook_data['created_at'],
                     currency=webhook_data['currency'],
                     current_subtotal_price=webhook_data['current_subtotal_price'],
@@ -58,8 +60,9 @@ class OrderList(APIView):
             with transaction.atomic():
                 with connection.cursor() as cursor:
                     cursor.execute('''
-                        SELECT * FROM api_order
-                        WHERE shop_domain = %s
+                        SELECT o.*, s.shopify_domain FROM api_order o
+                        JOIN api_shop s ON o.shop_id = s.id
+                        WHERE s.shopify_domain = %s
                     ''', [shop_domain])
                 
                     results = db.dictfetchall(cursor)

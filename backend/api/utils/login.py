@@ -37,8 +37,7 @@ def get_sanitized_shop_param(request):
 def build_auth_params():
     scopes = settings.SHOPIFY_API_SCOPES.split(",")
 
-    redirect_uri = f'http://{settings.FRONTEND_URL}/shopify-callback'
-    # redirect_uri = f'https://{settings.FRONTEND_URL}/shopify-callback'
+    redirect_uri = f'{settings.FRONTEND_URL}/shopify-callback'
 
     state = binascii.b2a_hex(os.urandom(15)).decode("utf-8")
 
@@ -55,6 +54,6 @@ def _new_session(shop_url):
 
 
 def build_callback_redirect_uri(request, params):
-    base = request.session.get("return_to", settings.FRONTEND_URL)
+    base = settings.FRONTEND_URL
     shop = params.get('shop')
     return f"{base}?shop={shop}"

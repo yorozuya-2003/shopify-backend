@@ -14,10 +14,10 @@ class Shop(models.Model):
 
 class Order(models.Model):
     order_id = models.BigIntegerField(unique=True)
-    shop_domain = models.CharField(max_length=255)
+    shop = models.ForeignKey(Shop, on_delete=models.CASCADE)
     created_at = models.DateTimeField()
     currency = models.CharField(max_length=3)
     current_subtotal_price = models.DecimalField(max_digits=10, decimal_places=3)
 
     def __str__(self):
-        return f"Order {self.order_id} - {self.contact_email}"
+        return f"order {self.order_id}"
